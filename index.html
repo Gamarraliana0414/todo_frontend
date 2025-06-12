@@ -8,6 +8,7 @@
 <body class="container py-5">
   <h1 class="mb-4">Lista de Tareas</h1>
 
+  <!-- Formulario para agregar tareas -->
   <form id="tareaForm" class="mb-4">
     <div class="mb-3">
       <input type="text" id="titulo" class="form-control" placeholder="Título de la tarea" required>
@@ -15,20 +16,20 @@
     <div class="mb-3">
       <textarea id="descripcion" class="form-control" placeholder="Descripción (opcional)"></textarea>
     </div>
-    <button class="btn btn-primary">Agregar Tarea</button>
+    <button type="submit" class="btn btn-primary">Agregar Tarea</button>
   </form>
 
-  <ul id="listaTareas" class="list-group"></ul>
+  <!-- Lista de tareas -->
+  <ul id="lista-tareas" class="list-group"></ul>
 
+  <!-- Script JavaScript -->
   <script>
-    const API_URL = "https://backend-2-xeze.onrender.com";
+    const API_URL = "https://backend-2-xeze.onrender.com/tareas";
 
-
-    async function cargarTareas() {
-      const res = await fetch(`${API_URL}/tareas`);
+    async function obtenerTareas() {
+      const res = await fetch(API_URL);
       const tareas = await res.json();
-
-      const lista = document.getElementById("listaTareas");
+      const lista = document.getElementById("lista-tareas");
       lista.innerHTML = "";
 
       tareas.forEach(t => {
@@ -37,7 +38,7 @@
 
         item.innerHTML = `
           <div>
-            <input type="checkbox" ${t.completado ? "checked" : ""} onchange="toggleEstado(${t.id}, this.checked)">
+            <input type="checkbox" ${t.completado ? "checked" : ""} onchange="toggleCompletado(${t.id}, this.checked)">
             <strong class="${t.completado ? 'text-decoration-line-through' : ''} ms-2">${t.titulo}</strong>
             <p class="mb-0 ms-4">${t.descripcion || ""}</p>
           </div>
@@ -48,44 +49,41 @@
       });
     }
 
-    async function agregarTarea(e) {
+    async function crearTarea(e) {
       e.preventDefault();
 
-      const titulo = document.getElementById("titulo").value;
+      const titulo = document.getElementById("titulo").value.trim();
+      const descripcion = document.getElementById("descripcion").value.trim();
 
-      const descripcion = document.getElementById("descripcion").value;
+      if (!titulo) return;
 
-      await fetch(`${API_URL}/tareas`, {
+      await fetch(API_URL, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ titulo, descripcion })
       });
 
       document.getElementById("tareaForm").reset();
-      cargarTareas();
+      obtenerTareas();
     }
 
-    async function toggleEstado(id, completado) {
-      await fetch(`${API_URL}/tareas/${id}`, {
+    async function toggleCompletado(id, completado) {
+      await fetch(`${API_URL}/${id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ completado })
       });
-      cargarTareas();
+      obtenerTareas();
     }
 
     async function eliminarTarea(id) {
-      await fetch(`${API_URL}/tareas/${id}`, { method: "DELETE" });
-      cargarTareas();
+      await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+      obtenerTareas();
     }
 
-    document.getElementById("tareaForm").addEventListener("submit", agregarTarea);
+    document.getElementById("tareaForm").addEventListener("submit", crearTarea);
 
-    cargarTareas();
+    obtenerTareas();
   </script>
 </body>
 </html>
