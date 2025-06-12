@@ -1,6 +1,6 @@
-const API_URL = "https://backend-2-xeze.onrender.com";
+const API_URL = "https://backend-2-xeze.onrender.com/tareas";
 
-
+// Cargar tareas al iniciar
 async function obtenerTareas() {
   const res = await fetch(API_URL);
   const tareas = await res.json();
@@ -14,7 +14,8 @@ async function obtenerTareas() {
     li.innerHTML = `
       <div>
         <input type="checkbox" ${tarea.completado ? "checked" : ""} onchange="toggleCompletado(${tarea.id}, this.checked)">
-        <span class="${tarea.completado ? 'text-decoration-line-through' : ''} ms-2">${tarea.titulo}</span>
+        <strong class="${tarea.completado ? 'text-decoration-line-through' : ''} ms-2">${tarea.titulo}</strong>
+        <p class="mb-0 ms-4">${tarea.descripcion || ""}</p>
       </div>
       <button class="btn btn-danger btn-sm" onclick="eliminarTarea(${tarea.id})">Eliminar</button>
     `;
@@ -23,33 +24,44 @@ async function obtenerTareas() {
   });
 }
 
-async function crearTarea() {
-  const input = document.getElementById("nueva-tarea");
-  const titulo = input.value.trim();
+// Crear una nueva tarea al enviar el formulario
+async function crearTarea(e) {
+  e.preventDefault();
+
+  const titulo = document.getElementById("titulo").value.trim();
+  const descripcion = document.getElementById("descripcion").value.trim();
+
   if (!titulo) return;
 
   await fetch(API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ titulo: titulo })
+    body: JSON.stringify({ titulo, descripcion })
   });
 
-  input.value = "";
+  document.getElementById("tareaForm").reset();
   obtenerTareas();
 }
 
+// Cambiar estado de completado
 async function toggleCompletado(id, completado) {
   await fetch(`${API_URL}/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ completado: completado })
+    body: JSON.stringify({ completado })
   });
   obtenerTareas();
 }
 
+// Eliminar tarea
 async function eliminarTarea(id) {
   await fetch(`${API_URL}/${id}`, { method: "DELETE" });
   obtenerTareas();
 }
 
+// Asociar el formulario con el evento submit
+document.getElementById("tareaForm").addEventListener("submit", crearTarea);
+
+// Cargar tareas al cargar la página
 obtenerTareas();
+
