@@ -1,4 +1,5 @@
-const API_URL = "https://backend-1-nsfp.onrender.com/tareas";
+const API_URL = "https://backend-2-xeze.onrender.com";
+
 
 async function obtenerTareas() {
   const res = await fetch(API_URL);
