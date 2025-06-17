@@ -4,11 +4,12 @@ Permite al usuario agregar tareas, verlas en una lista, marcarlas como completad
 
 🛠️ Instrucciones para clonar y correr localmente (Frontend)
 Clona este repositorio:
-git clone https://github.com/tu_usuario/todo-frontend.git
+git clone [https://github.com/tu_usuario/todo-frontend.git]
 cd todo-frontend
 Abre el archivo index.html directamente en tu navegador, o usa la extensión Live Server de VS Code para probarlo dinámicamente.
 
 🌐 Enlace de despliegue (GitHub Pages)
 📄 Frontend en GitHub Pages:
+https://github.com/Gamarraliana0414/todo_frontend.git
 
 
